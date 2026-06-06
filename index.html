@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selamat Ulang Tahun, Cintaku</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text-main: #f8e5ee;
+    --text-muted: #d4a5b9;
+    --accent: #ff8fa3;
+    --card-bg: rgba(255, 255, 255, 0.02);
+    --card-border: rgba(255, 255, 255, 0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* --- LATAR BELAKANG BERGERAK (GELAP & ELEGAN) --- */
+  body, #intro {
+    background: linear-gradient(-45deg, #0f0208, #000000, #1a050f, #050103);
+    background-size: 400% 400%;
+    animation: gradientBG 20s ease infinite;
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+  body { min-height: 100vh; }
+
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  h1, h2, h3, .serif { font-family: 'Playfair Display', serif; font-weight: 400; }
+  
+  /* --- PARTICLES --- */
+  #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  
+  .sakura-petal {
+    position: absolute; top: -10%;
+    background: linear-gradient(135deg, rgba(255,182,193,0.8) 0%, rgba(255,107,129,0.8) 100%);
+    border-radius: 15px 0 15px 15px;
+    box-shadow: 0 0 12px rgba(255,107,129,0.4);
+    will-change: transform, opacity;
+  }
+  @keyframes fall {
+    0% { transform: translate(0, -10vh) rotate(0deg) scale(var(--s)); opacity: 0; }
+    15% { opacity: var(--o); }
+    50% { transform: translate(var(--x), 50vh) rotate(var(--rot)) scale(var(--s)); }
+    85% { opacity: var(--o); }
+    100% { transform: translate(calc(var(--x) * -1), 110vh) rotate(calc(var(--rot) * 2)) scale(var(--s)); opacity: 0; }
+  }
+
+  .dust-particle {
+    position: absolute;
+    width: 2.5px; height: 2.5px;
+    background: rgba(255, 143, 163, 0.6);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 143, 163, 0.8), 0 0 20px rgba(255, 255, 255, 0.5);
+    will-change: transform, opacity;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(10vh) scale(0.5); opacity: 0; }
+    50% { opacity: 1; transform: translateY(-40vh) scale(1.2); }
+    100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+  }
+
+  /* --- INTRO KADO --- */
+  #intro {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity 1.2s ease, transform 1.2s ease, filter 1.2s ease;
+  }
+  .gift-container { cursor: pointer; text-align: center; position: relative; }
+  
+  .gift-glow {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 150px; height: 150px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 143, 163, 0.2) 0%, transparent 70%);
+    animation: pulseGlow 2s infinite alternate;
+    z-index: -1;
+  }
+
+  .gift-svg {
+    width: 130px; height: 130px;
+    animation: float 3s ease-in-out infinite;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+  }
+  .gift-container:hover .gift-svg { transform: scale(1.15) rotate(5deg); animation: shake 0.5s infinite; }
+  .intro-text {
+    margin-top: 30px; font-size: 0.85rem; color: var(--text-muted);
+    letter-spacing: 3px; text-transform: uppercase;
+    animation: pulseText 2s infinite;
+  }
+
+  @keyframes pulseGlow { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; } 100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; } }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+  @keyframes shake { 0%, 100% {transform: rotate(0deg);} 25% {transform: rotate(4deg);} 75% {transform: rotate(-4deg);} }
+  @keyframes pulseText { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); } }
+
+  /* --- MUSIC PLAYER --- */
+  #music-widget {
+    position: fixed; bottom: 30px; left: 30px; z-index: 100;
+    background: rgba(10, 2, 5, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 12px;
+    display: flex; align-items: center; gap: 15px;
+    backdrop-filter: blur(15px);
+    width: 250px; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    opacity: 0; transform: translateY(30px); transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.5s;
+  }
+  #music-widget.visible { opacity: 1; transform: translateY(0); }
+  .cover-art { width: 48px; height: 48px; border-radius: 8px; background: #111; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+  .track-info { flex: 1; }
+  .track-title { font-size: 0.85rem; font-weight: 500; color: #fff; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .track-artist { font-size: 0.7rem; color: var(--text-muted); }
+  .play-btn {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer;
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; transition: all 0.3s;
+  }
+  .play-btn:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
+  .play-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+  /* --- MAIN CONTENT --- */
+  #main-content { opacity: 0; pointer-events: none; transition: opacity 1.5s ease; position: relative; z-index: 10; }
+  #main-content.visible { opacity: 1; pointer-events: auto; }
+  
+  .section { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; }
+  
+  /* HERO */
+  .subtitle { font-size: 0.85rem; letter-spacing: 4px; color: var(--text-muted); margin-bottom: 25px; text-transform: lowercase; }
+  .hero h1 { font-size: clamp(3rem, 8vw, 5.5rem); line-height: 1.1; margin-bottom: 15px; text-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+  .hero h1 span { color: var(--accent); font-style: italic; }
+  .hero-desc { font-size: 1rem; color: rgba(255,255,255,0.7); max-width: 550px; margin: 30px auto; line-height: 1.7; font-weight: 300; }
+  .scroll-hint { font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-top: 60px; opacity: 0.7; animation: pulseText 2s infinite; }
+
+  /* LETTER */
+  .letter-box { max-width: 650px; text-align: center; }
+  .letter-box h2 { font-size: clamp(2.2rem, 5vw, 3.5rem); margin-bottom: 35px; line-height: 1.2; color: #fff; }
+  .letter-box p { font-size: 1.05rem; line-height: 1.9; color: var(--text-muted); margin-bottom: 25px; font-weight: 300; }
+  .signature { font-family: 'Playfair Display', serif; font-style: italic; color: var(--accent); font-size: 1.3rem; margin-top: 50px; }
+
+  /* CARDS GRID */
+  .cards-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 950px; width: 100%; margin-top: 50px; }
+  .feature-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 35px 25px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+  }
+  .feature-card:hover { transform: translateY(-10px); background: rgba(255,255,255,0.05); border-color: rgba(255, 143, 163, 0.3); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+  .feature-card h3 { font-size: 1.3rem; margin-bottom: 15px; color: #fff; }
+  .feature-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+
+  /* PHOTO GRID */
+  .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 750px; width: 100%; margin-top: 50px; }
+  .photo-item {
+    position: relative; aspect-ratio: 1/1; border-radius: 16px; overflow: hidden;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  
+  .photo-item img { 
+    width: 100%; height: 100%; object-fit: cover; 
+    filter: grayscale(40%) contrast(1.1) brightness(0.9); 
+    transition: all 0.6s ease;
+    background-color: #2a0b16; 
+  }
+  .photo-item:hover img { filter: grayscale(0%) brightness(1); transform: scale(1.08); }
+  
+  .photo-label {
+    position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center;
+    font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.3rem;
+    color: #fff; text-shadow: 0 2px 15px rgba(0,0,0,0.9); pointer-events: none;
+    opacity: 0; transform: translateY(10px); transition: all 0.4s ease;
+  }
+  .photo-item:hover .photo-label { opacity: 1; transform: translateY(0); }
+
+  /* --- CINEMATIC REVEAL ANIMATIONS --- */
+  .reveal { 
+    opacity: 0; 
+    transform: translateY(40px) scale(0.95); 
+    filter: blur(8px);
+    transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1); 
+  }
+  .reveal.active { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+    filter: blur(0);
+  }
+
+  @media (max-width: 768px) {
+    .cards-container { grid-template-columns: repeat(2, 1fr); }
+    #music-widget { left: 50%; transform: translateX(-50%) translateY(30px); bottom: 25px; }
+    #music-widget.visible { transform: translateX(-50%) translateY(0); }
+  }
+  @media (max-width: 480px) {
+    .cards-container { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<audio id="myAudio" src="audio/kita usahakan.mp3" loop></audio>
+
+<div id="intro">
+  <div class="gift-container" onclick="openGift()">
+    <div class="gift-glow"></div>
+    <svg class="gift-svg" viewBox="0 0 24 24" fill="none" stroke="url(#goldGrad)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+      <defs>
+        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffb6c1" />
+          <stop offset="100%" stop-color="#ff6b81" />
+        </linearGradient>
+      </defs>
+      <rect x="3" y="8" width="18" height="14" rx="2" fill="rgba(255,107,129,0.1)"/>
+      <path d="M12 5V22" stroke-width="2"/>
+      <path d="M3 8H21" stroke-width="2"/>
+      <path d="M12 5C8.5 2 4 4 6 7.5C7.5 10 12 8 12 8" fill="rgba(255,107,129,0.2)"/>
+      <path d="M12 5C15.5 2 20 4 18 7.5C16.5 10 12 8 12 8" fill="rgba(255,107,129,0.2)"/>
+    </svg>
+    <div class="intro-text">Ketuk untuk membuka kado</div>
+  </div>
+</div>
+
+<div id="music-widget">
+  <img src="foto/foto3.jpeg" alt="Cover" class="cover-art">
+  <div class="track-info">
+    <div class="track-title">Kita usahakan rumah itu</div>
+    <div class="track-artist">Sal pribadi</div>
+  </div>
+  <button class="play-btn" id="play-btn" onclick="togglePlay()">
+    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+  </button>
+</div>
+
+<div id="main-content">
+  
+  <section class="section hero">
+    <div class="subtitle reveal">selamat ulang tahun</div>
+    <h1 class="reveal">Happy Birthday<br><span>ayah arall&arallyn</span></h1>
+    <p class="hero-desc reveal"></p>
+    <div class="scroll-hint reveal">Scrol ke bawah untuk kejutan ulang tahunmu</div>
+  </section>
+
+  <section class="section">
+    <div class="letter-box">
+      <div class="subtitle reveal">dari lubuk hati yang paling dalam</div>
+      <h2 class="reveal">Hari ini adalah hari<br>di mana dunia menjadi<br>jauh lebih indah.</h2>
+      <p class="reveal">Hari di mana kamu lahir adalah hal terbaik yang pernah terjadi di dunia ini — dan di hidupku. Setiap tahun yang bisa kulewati di sampingmu adalah anugerah yang selalu kusyukuri. Kamu membuat hari-hari biasa terasa seperti keajaiban, dan hari-hari ajaib terasa seperti mimpi jadi nyata.</p>
+      <p class="reveal">Bunga-bunga ini adalah lambang kecil dari besarnya rasa cinta yang kupunya untukmu. Tidak ada buket di dunia ini yang cukup besar, tidak ada lagu yang cukup manis, tidak ada puisi yang cukup panjang — tapi ketahuilah bahwa semuanya adalah milikmu. Selamat ulang tahun, cintaku.</p>
+      <div class="signature reveal">— Milikmu, selalu & selamanya 🌹</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="subtitle reveal">beribu doa dan harapan</div>
+    <h2 class="serif reveal" style="font-size: 2.2rem; margin-bottom: 20px;">Apa yang Selalu Kusyukuri Darimu</h2>
+    
+    <div class="cards-container">
+      <div class="feature-card reveal">
+        <h3>Senyumanmu</h3>
+        <p>Senyum manis yang membuatku jatuh cinta setiap hari. Selamat ulang tahun untuk senyuman itu.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay: 0.1s;">
+        <h3>Jiwamu</h3>
+        <p>Begitu tulus, bersinar, dan lebih berharga dari apa pun yang ada di dunia ini. Aku sangat beruntung memilikinya.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay: 0.2s;">
+        <h3>Kebaikanmu</h3>
+        <p>Caramu menyayangi dan peduli pada orang-orang di sekitarmu membuat dunia ini terasa lebih hangat dan indah.</p>
+      </div>
+      <div class="feature-card reveal">
+        <h3>Tawamu</h3>
+        <p>Suara favoritku di alam semesta. Semoga hari ini dipenuhi dengan alasan tanpa akhir untuk membuatmu tertawa.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay: 0.1s;">
+        <h3>Kekuatanmu</h3>
+        <p>Kamu telah melewati berbagai badai dengan begitu hebat. Aku makin mengagumimu di setiap tahunnya.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay: 0.2s;">
+        <h3>Dirimu Apa Adanya</h3>
+        <p>Setiap versi dirimu, di setiap ulang tahunmu — kamu selalu lebih dari cukup. Kamu adalah segalanya.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="subtitle reveal">terabadikan oleh waktu</div>
+    <h2 class="serif reveal" style="font-size: 2.2rem; margin-bottom: 10px;">favorite picture🤍</h2>
+    
+    <div class="photo-grid">
+      <div class="photo-item reveal">
+        <img src="foto/foto2.jpeg" alt="Foto 1">
+        <div class="photo-label">kamu</div>
+      </div>
+      
+      <div class="photo-item reveal" style="transition-delay: 0.2s;">
+        <img src="foto/foto4.jpeg" alt="Foto 2">
+        <div class="photo-label">adalah</div>
+      </div>
+      
+      <div class="photo-item reveal">
+        <img src="foto/foto5.jpeg" alt="Foto 3">
+        <div class="photo-label">begitu</div>
+      </div>
+      
+      <div class="photo-item reveal" style="transition-delay: 0.2s;">
+        <img src="foto/foto6.jpeg" alt="Foto 4">
+        <div class="photo-label">indah</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="min-height: 60vh;">
+    <div class="subtitle reveal">selamat ulang tahun, cintaku</div>
+    <h2 class="serif reveal" style="font-size: clamp(2.5rem, 6vw, 3.5rem); margin-bottom: 30px; color: var(--accent);">Kamu Dicintai<br>Lebih dari yang Kamu Tahu</h2>
+    <p class="reveal" style="max-width: 600px; color: rgba(255,255,255,0.7); font-weight: 300; line-height: 1.8;">
+      semangat ldr yaa, kita harus wujudinn mimpi kita sama sama🤍.
+    </p>
+    <div class="reveal" style="margin-top: 60px; font-style: italic; color: var(--text-muted); font-size: 0.75rem; letter-spacing: 3px;">
+      DIBUAT DENGAN CINTA YANG TANPA AKHIR, HANYA UNTUKMU
+    </div>
+  </section>
+
+</div>
+
+<script>
+// ---- ANIMASI PARTIKEL (SAKURA & DEBU CAHAYA) ----
+function createParticles() {
+  const container = document.getElementById('particles');
+  
+  // 1. Sakura Petals
+  for (let i = 0; i < 35; i++) {
+    const petal = document.createElement('div');
+    petal.classList.add('sakura-petal');
+    
+    const size = Math.random() * 0.6 + 0.4;
+    const startX = Math.random() * 100;
+    const drift = (Math.random() - 0.5) * 60; 
+    const rotation = Math.random() * 360 + 360;
+    const duration = Math.random() * 8 + 8; 
+    const delay = Math.random() * 12;
+
+    petal.style.left = startX + 'vw';
+    petal.style.width = '14px';
+    petal.style.height = '14px';
+    petal.style.setProperty('--s', size);
+    petal.style.setProperty('--x', drift + 'vw');
+    petal.style.setProperty('--rot', rotation + 'deg');
+    petal.style.setProperty('--o', Math.random() * 0.6 + 0.4);
+    petal.style.animation = `fall ${duration}s linear ${delay}s infinite`;
+
+    container.appendChild(petal);
+  }
+
+  // 2. Glow Dust 
+  for (let i = 0; i < 40; i++) {
+    const dust = document.createElement('div');
+    dust.classList.add('dust-particle');
+    
+    dust.style.left = Math.random() * 100 + 'vw';
+    dust.style.top = Math.random() * 100 + 'vh';
+    dust.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    dust.style.animationDelay = (Math.random() * 8) + 's';
+    
+    container.appendChild(dust);
+  }
+}
+
+// ---- MUSIC PLAYER (PAKAI LAGU MP3) ----
+const myAudio = document.getElementById('myAudio'); 
+let isPlaying = false;
+
+function togglePlay() {
+  const btn = document.getElementById('play-btn');
+  
+  if (isPlaying) {
+    myAudio.pause();
+    isPlaying = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`; 
+  } else {
+    myAudio.play().catch(function(error) {
+      alert("Suara belum bisa diputar. Pastikan file lagumu sudah bernama 'kita usahakan' di dalam folder 'audio'!");
+      console.log(error);
+    });
+    isPlaying = true;
+    btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`; 
+  }
+}
+
+// ---- INTERAKSI KADO ----
+function openGift() {
+  const intro = document.getElementById('intro');
+  const mainContent = document.getElementById('main-content');
+  const musicWidget = document.getElementById('music-widget');
+  
+  intro.style.transform = 'scale(1.5)';
+  intro.style.filter = 'blur(15px) brightness(1.5)';
+  intro.style.opacity = '0';
+  
+  setTimeout(() => {
+    intro.style.display = 'none';
+    mainContent.classList.add('visible');
+    musicWidget.classList.add('visible');
+    createParticles(); 
+    togglePlay(); 
+    setTimeout(checkReveal, 100); 
+  }, 1000);
+}
+
+// ---- CINEMATIC SCROLL ANIMATION ----
+function checkReveal() {
+  const reveals = document.querySelectorAll('.reveal');
+  const windowHeight = window.innerHeight;
+  const elementVisible = 80; 
+
+  reveals.forEach(reveal => {
+    const elementTop = reveal.getBoundingClientRect().top;
+    if (elementTop < windowHeight - elementVisible) {
+      reveal.classList.add('active');
+    }
+  });
+}
+window.addEventListener('scroll', checkReveal);
+</script>
+</body>
+</html>
